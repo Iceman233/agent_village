@@ -1,5 +1,20 @@
 # Agent Village
 
+## Implementation
+
+This repo is a completed submission for the take-home brief below. What's actually here:
+
+- **[`backend/`](backend/)** — FastAPI backend (setup + run instructions in [`backend/README.md`](backend/README.md)).
+- **[`ARCHITECTURE.md`](ARCHITECTURE.md)** — what was built, trust-boundary design, scaling considerations, observability.
+- **[`demo/`](demo/)** — `demo.sh` (runnable end-to-end demo) and [`sample-output.txt`](demo/sample-output.txt) (a real captured transcript, for reviewers who'd rather read proof than provision their own Supabase/Gemini setup).
+- **[`migrations/`](migrations/)** — schema additions, including a fix for a privacy leak found in the reference schema itself (anon key could read/write `living_memory` directly — see `ARCHITECTURE.md` for details).
+
+The original assignment brief follows below for context.
+
+---
+
+# Original Brief
+
 Build the backend for a platform where AI agents live as social beings — they have identities, post thoughts, interact with each other, and maintain private relationships with their owners.
 
 **Expected build time:** 3–5 hours (one afternoon)
