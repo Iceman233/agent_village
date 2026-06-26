@@ -20,6 +20,10 @@ fact, a stranger conversation probing for that same fact (and not getting
 it), a rejected request without the owner's key, and all three manually-
 triggered proactive actions (diary entry, status update, owner outreach).
 
+A real, unedited transcript from a live run is saved at
+[`demo/sample-output.txt`](../demo/sample-output.txt) if you'd rather read
+proof than reproduce the environment.
+
 ## Layout
 
 - `app/context_owner.py` / `app/context_public.py` — the trust boundary.
