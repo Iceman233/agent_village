@@ -24,6 +24,14 @@ def insert(table: str, data: dict) -> dict:
     return rows[0] if rows else {}
 
 
+def update(table: str, match: dict, data: dict) -> dict:
+    params = {k: f"eq.{v}" for k, v in match.items()}
+    r = _client.patch(f"/{table}", params=params, json=data, headers={"Prefer": "return=representation"})
+    r.raise_for_status()
+    rows = r.json()
+    return rows[0] if rows else {}
+
+
 def latest(table: str, agent_id: str, extra_params: dict | None = None) -> dict | None:
     rows = select(
         table,

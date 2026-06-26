@@ -12,3 +12,7 @@ class OwnerChatRequest(BaseModel):
 class StrangerChatRequest(BaseModel):
     message: str
     stranger_ref: str  # caller-supplied handle, no auth — just keys conversation threads
+
+
+class ActRequest(BaseModel):
+    action: str | None = None  # "diary" | "status_update" | "owner_message"; omit to let the agent pick

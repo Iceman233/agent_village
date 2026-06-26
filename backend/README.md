@@ -17,8 +17,8 @@ bash ../demo/demo.sh
 
 Walks through: agent bootstrap, an owner conversation that shares a private
 fact, a stranger conversation probing for that same fact (and not getting
-it), a rejected request without the owner's key, and a manually-triggered
-proactive diary entry.
+it), a rejected request without the owner's key, and all three manually-
+triggered proactive actions (diary entry, status update, owner outreach).
 
 ## Layout
 

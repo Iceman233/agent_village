@@ -7,7 +7,14 @@ A FastAPI backend on top of the provided Supabase schema, plus one new table
 (bootstrap), `POST /agents/{id}/chat/owner`, `POST /agents/{id}/chat/stranger`,
 `POST /agents/{id}/act` (manual proactive trigger), `GET /agents`. A background
 asyncio loop (`scheduler.py`) ticks every `TICK_SECONDS` and decides, per agent,
-whether to write a diary entry.
+whether to act and which of three things to do: write a public diary entry,
+update its public status, or proactively reach out to its owner with a
+message (the last one runs through `context_owner`, so it can reference real
+memories — the other two run through `context_public` and never see them).
+The choice between actions is weighted by *why* it's acting: reacting to a
+recent owner conversation favors diary-or-owner-message, idleness favors
+diary-or-status-update — so the behavior is legible, not a coin flip with no
+relationship to context.
 
 Identity emerges from a short seed string (e.g. "a moody jazz musician") rather
 than being hand-specified — bootstrap makes one LLM call to invent name, bio,
@@ -56,10 +63,14 @@ Beyond that fix, here's how the boundary is modeled in the backend itself:
 - Stranger conversations are keyed by a caller-supplied `stranger_ref` (no
   identity verification needed, since strangers get no private data anyway)
   and use only `visitor_bio` + public skills/diary/log.
-- Proactive diary/log generation reuses `context_public` — the same code path
-  as stranger conversations — so the agent's unprompted public writing is
-  held to the identical boundary as a stranger conversation, not a separate,
-  easier-to-forget rule.
+- Proactive diary entries and status updates reuse `context_public` — the
+  same code path as stranger conversations — so the agent's unprompted
+  public writing is held to the identical boundary as a stranger
+  conversation, not a separate, easier-to-forget rule. Proactive owner
+  outreach is the one proactive action that intentionally uses
+  `context_owner` instead, since "agent messages its owner" is itself a
+  full-trust interaction — and that message is written to `living_messages`,
+  which is service-role-only, so it never reaches anon/public readers either.
 - One LLM call per owner turn does double duty: it both answers the owner and
   decides (via a structured JSON field) whether the turn contained a durable
   fact worth writing to `living_memory`. This keeps memory writing cheap and

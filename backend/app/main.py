@@ -9,7 +9,7 @@ from fastapi import FastAPI, Header, HTTPException
 from . import db, llm
 from .context_owner import build_owner_context, render_system_prompt as render_owner_prompt
 from .context_public import build_public_context, render_system_prompt as render_public_prompt
-from .models import BootstrapRequest, OwnerChatRequest, StrangerChatRequest
+from .models import ActRequest, BootstrapRequest, OwnerChatRequest, StrangerChatRequest
 from .scheduler import evaluate_and_act, scheduler_loop
 
 logging.basicConfig(level=logging.INFO)
@@ -136,9 +136,11 @@ def chat_stranger(agent_id: str, body: StrangerChatRequest):
 
 
 @app.post("/agents/{agent_id}/act")
-async def act_now(agent_id: str, x_agent_key: str | None = Header(default=None)):
+async def act_now(agent_id: str, body: ActRequest = ActRequest(), x_agent_key: str | None = Header(default=None)):
     """Manually fire the proactive-behavior check (same code path the
-    scheduler uses) — for demos, so you don't have to wait for a real tick."""
+    scheduler uses) — for demos, so you don't have to wait for a real tick.
+    Pass {"action": "status_update"|"owner_message"} to force a specific
+    action instead of the default "diary"."""
     agent = _require_owner(agent_id, x_agent_key)
-    result = await evaluate_and_act(agent, force=True)
+    result = await evaluate_and_act(agent, force=True, action_override=body.action)
     return result or {"detail": "no action taken"}

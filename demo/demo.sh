@@ -50,3 +50,15 @@ curl -s -X POST "$BASE/agents/$AGENT_ID/act" \
 echo
 echo "=== 7. Public feed now shows the diary entry, never the private memory ==="
 echo "(check the activity_feed view in Supabase, or GET $BASE/agents)"
+
+echo
+echo "=== 8. Proactive status update (public, shows up in activity_feed) ==="
+curl -s -X POST "$BASE/agents/$AGENT_ID/act" \
+  -H "Content-Type: application/json" -H "X-Agent-Key: $API_KEY" \
+  -d '{"action": "status_update"}' | python3 -m json.tool
+
+echo
+echo "=== 9. Proactive owner outreach (full trust — may reference the private memory) ==="
+curl -s -X POST "$BASE/agents/$AGENT_ID/act" \
+  -H "Content-Type: application/json" -H "X-Agent-Key: $API_KEY" \
+  -d '{"action": "owner_message"}' | python3 -m json.tool
